@@ -36,6 +36,15 @@ const magX = ref(0);
 const magY = ref(0);
 const magRelX = ref(0);
 const magRelY = ref(0);
+const mouseX = ref(0);
+const mouseY = ref(0);
+
+const handleMouseMove = (e) => {
+    if (!isFlying.value) {
+        mouseX.value = e.clientX;
+        mouseY.value = e.clientY;
+    }
+};
 
 const clickSound = new Audio('/sounds/page-flip.mp3');
 
@@ -247,12 +256,12 @@ const resetFlight = () => {
 onMounted(() => {
   calculateDynamicState();
   window.addEventListener('resize', calculateDynamicState);
-  // window.addEventListener('mousemove', handleMouseMove); // This was commented out in the original, keeping it that way.
+  window.addEventListener('mousemove', handleMouseMove);
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', calculateDynamicState);
-  // window.removeEventListener('mousemove', handleMouseMove); // This was commented out in the original, keeping it that way.
+  window.removeEventListener('mousemove', handleMouseMove);
 });
 </script>
 
@@ -261,6 +270,7 @@ onUnmounted(() => {
     
     <svg class="dynamic-svg-layer">
       <g 
+        id="newspaper-rack-trigger"
         class="interactive-group"
         @mouseenter="isHovered = true"
         @mouseleave="isHovered = false"
@@ -279,7 +289,7 @@ onUnmounted(() => {
       class="cursor-tooltip"
       :style="{ top: mouseY + 15 + 'px', left: mouseX + 15 + 'px' }"
     >
-      <span class="icon">📰</span> 閱讀報紙
+      <span class="icon">📰</span> 開始閱讀報紙
     </div>
 
     <!-- 3D 報紙演員 -->
@@ -482,10 +492,24 @@ onUnmounted(() => {
 
 .dynamic-svg-layer { width: 100vw; height: 100vh; display: block; }
 .interactive-group { cursor: pointer; pointer-events: auto; }
-.rack-path { fill: transparent; stroke: transparent; transition: all 0.4s ease; }
+.rack-path { 
+  fill: transparent; 
+  stroke: transparent; 
+  stroke-width: 2.5; 
+  transition: all 0.4s ease; 
+}
 .rack-path.is-hovered {
-  fill: rgba(255, 215, 0, 0.15); stroke: #FFD700; stroke-width: 2;
-  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.4));
+  fill: rgba(255, 215, 0, 0.2); 
+  stroke: #FFD700; 
+  stroke-width: 4;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+  animation: none;
+}
+
+@keyframes pulsePathRack {
+  0%, 100% { stroke: rgba(255, 215, 0, 0.2); stroke-width: 2; }
+  50% { stroke: rgba(255, 215, 0, 1); stroke-width: 3.5; }
 }
 .cursor-tooltip {
   position: fixed; background: rgba(0, 0, 0, 0.85); color: #FFD700;

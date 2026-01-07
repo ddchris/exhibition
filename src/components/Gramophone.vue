@@ -111,6 +111,7 @@ const stopPlay = () => {
     <!-- 注意：這裡不再使用 viewBox，而是直接匹配視窗大小 -->
     <svg class="dynamic-svg-layer">
       <g 
+        id="gramophone-trigger"
         class="interactive-group"
         @mouseenter="isHovered = true"
         @mouseleave="isHovered = false"
@@ -157,13 +158,20 @@ const stopPlay = () => {
 .gramophone-path {
   fill: transparent;
   stroke: transparent;
-  stroke-width: 2;
-  transition: fill 0.3s, stroke 0.3s;
+  stroke-width: 2.5;
+  transition: all 0.3s ease;
 }
 .gramophone-path.is-active {
   fill: rgba(255, 215, 0, 0.15); 
   stroke: #FFD700; 
-  stroke-width: 3;
+  stroke-width: 4;
+  stroke-dasharray: none;
+  animation: none;
+}
+
+@keyframes pulsePathGramo {
+  0%, 100% { stroke: rgba(255, 215, 0, 0.2); stroke-width: 2; }
+  50% { stroke: rgba(255, 215, 0, 1); stroke-width: 3.5; }
 }
 .cursor-tooltip {
   position: fixed;

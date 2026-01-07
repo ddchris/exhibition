@@ -4,6 +4,8 @@ import NewspaperRack from './components/NewspaperRack.vue';
 import MemoryTable from './components/MemoryTable.vue';
 import Gramophone from './components/Gramophone.vue';
 import BackgroundCanvas from './components/BackgroundCanvas.vue';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const activePaper = ref(null);
 const transitionRect = ref(null);
@@ -23,6 +25,38 @@ const resetIdleTimer = () => {
   }
 };
 
+const startTour = () => {
+  const driverObj = driver({
+    showProgress: true,
+    overlayOpacity: 0.85,
+    nextBtnText: '下一步',
+    prevBtnText: '上一步',
+    doneBtnText: '知道了',
+    steps: [
+      { 
+        element: '#newspaper-rack-trigger', 
+        popover: { 
+          title: '時光報架', 
+          description: '點擊此處可翻閱 1913 年的《臺灣日日新報》，探索當年的新聞軼事。', 
+          side: "right", 
+          align: 'start' 
+        } 
+      },
+      { 
+        element: '#gramophone-trigger', 
+        popover: { 
+          title: '復古留聲機', 
+          description: '點擊留聲機可開啟語音導覽，為您朗讀報紙內容，沉浸在歷史氛圍中。', 
+          side: "left", 
+          align: 'start' 
+        } 
+      },
+    ]
+  });
+
+  driverObj.drive();
+};
+
 const handlePaperSelect = (payload) => {
   activePaper.value = payload.paper;
   transitionRect.value = payload.rect;
@@ -33,6 +67,11 @@ onMounted(() => {
   window.addEventListener('mousemove', resetIdleTimer);
   window.addEventListener('click', resetIdleTimer);
   window.addEventListener('touchstart', resetIdleTimer);
+  
+  // 延遲啟動導覽
+  setTimeout(() => {
+    startTour();
+  }, 1500);
 });
 
 onUnmounted(() => {
